@@ -1,14 +1,9 @@
 const mongoose = require("mongoose");
 
-const KeySchema = new mongoose.Schema({
-  key: String,
-  ip: String,
-  duration: Number,
-  status: { type: String, default: "active" },
-  createdAt: { type: Date, default: Date.now },
-  expiresAt: Number,
-  usedByIP: String,
-  usedAt: Number
+const UserSchema = new mongoose.Schema({
+  username: String,
+  password: String,
+  role: { type: String, default: "admin" }
 });
 
-module.exports = mongoose.model("Key", KeySchema);
+module.exports = mongoose.model("User", UserSchema);
