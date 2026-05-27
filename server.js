@@ -1,30 +1,17 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-require("dotenv").config();
-
 const app = express();
 
-// Middleware
-app.use(cors());
 app.use(express.json());
 
 // =====================
-// MongoDB CONNECTION
-// =====================
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ Mongo Error:", err));
-
-// =====================
-// ROOT ROUTE (NO NOT FOUND)
+// ROOT (NO NOT FOUND)
 // =====================
 app.get("/", (req, res) => {
   res.send("🚀 SINX API ONLINE");
 });
 
 // =====================
-// STATUS ROUTE
+// STATUS
 // =====================
 app.get("/status", (req, res) => {
   res.json({
@@ -35,7 +22,14 @@ app.get("/status", (req, res) => {
 });
 
 // =====================
-// ADMIN LOGIN
+// HEALTH CHECK
+// =====================
+app.get("/health", (req, res) => {
+  res.json({ ok: true });
+});
+
+// =====================
+// LOGIN (ADMIN)
 // =====================
 app.post("/admin/login", (req, res) => {
   const { username, password } = req.body;
@@ -48,8 +42,8 @@ app.post("/admin/login", (req, res) => {
   }
 
   if (
-    username === process.env.ADMIN_USER &&
-    password === process.env.ADMIN_PASS
+    username === "SINXPROXY" &&
+    password === "SINXVIP777"
   ) {
     return res.json({
       success: true,
@@ -61,13 +55,6 @@ app.post("/admin/login", (req, res) => {
     success: false,
     message: "Invalid credentials"
   });
-});
-
-// =====================
-// HEALTH CHECK (Render safe)
-// =====================
-app.get("/health", (req, res) => {
-  res.json({ ok: true });
 });
 
 // =====================
@@ -86,5 +73,5 @@ app.use((req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log("🚀 Server running on port", PORT);
 });
