@@ -9,17 +9,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connect
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ Mongo Error:", err));
 
-// Root route
+// 🟢 ROOT (TSY HISY NOT FOUND)
 app.get("/", (req, res) => {
-  res.send("🚀 SINX API ONLINE");
+  res.send(`
+    <h1>SINX API ONLINE 🚀</h1>
+    <p>Status: OK</p>
+    <p>Use /status for JSON response</p>
+  `);
 });
 
-// Health check (Render important)
+// 🟢 STATUS ROUTE
 app.get("/status", (req, res) => {
   res.json({
     status: "ONLINE",
@@ -28,7 +32,7 @@ app.get("/status", (req, res) => {
   });
 });
 
-// Admin login (simple)
+// 🟢 ADMIN LOGIN
 app.post("/admin/login", (req, res) => {
   const { username, password } = req.body;
 
@@ -38,7 +42,7 @@ app.post("/admin/login", (req, res) => {
   ) {
     return res.json({
       success: true,
-      message: "Login success"
+      message: "Login successful"
     });
   }
 
@@ -48,14 +52,15 @@ app.post("/admin/login", (req, res) => {
   });
 });
 
-// 404 handler
+// 🟢 404 HANDLER (MAINTSY FARANY)
 app.use((req, res) => {
   res.status(404).json({
-    error: "Route not found"
+    error: "Route not found",
+    path: req.path
   });
 });
 
-// Start server
+// 🟢 START SERVER
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
