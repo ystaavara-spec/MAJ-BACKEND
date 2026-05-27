@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
-  username: String,
-  password: String,
-  role: { type: String, default: "admin" }
+const KeySchema = new mongoose.Schema({
+  key: String,
+  duration: Number, // 1,7,30 days
+  createdAt: { type: Date, default: Date.now },
+  expiresAt: Date,
+  used: { type: Boolean, default: false }
 });
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("Key", KeySchema);
