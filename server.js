@@ -1,11 +1,7 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
-
-const connectDB = require("./config/db");
-
-const authRoutes = require("./routes/auth");
-const keyRoutes = require("./routes/keys");
 
 const app = express();
 
@@ -13,24 +9,56 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// DB connect
-connectDB();
+// MongoDB CONNECT (SAFE VERSION)
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.error("❌ Mongo Error:", err));
 
-// Routes
+// ROOT (NO NOT FOUND)
 app.get("/", (req, res) => {
-  res.send("SINX PRO API ONLINE 🚀");
+  res.send("🚀 SINX API ONLINE");
 });
 
+// STATUS ROUTE
 app.get("/status", (req, res) => {
-  res.json({ status: "ONLINE" });
+  res.json({
+    status: "ONLINE",
+    uptime: process.uptime(),
+    time: new Date()
+  });
 });
 
-app.use("/admin", authRoutes);
-app.use("/keys", keyRoutes);
+// ADMIN LOGIN
+app.post("/admin/login", (req, res) => {
+  const { username, password } = req.body;
 
-// Start
+  if (
+    username === process.env.ADMIN_USER &&
+    password === process.env.ADMIN_PASS
+  ) {
+    return res.json({
+      success: true,
+      message: "Login success"
+    });
+  }
+
+  return res.status(401).json({
+    success: false,
+    message: "Invalid credentials"
+  });
+});
+
+// 404 HANDLER (SAFE)
+app.use((req, res) => {
+  res.status(404).json({
+    error: "Route not found",
+    path: req.path
+  });
+});
+
+// START SERVER (IMPORTANT)
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Server running on", PORT);
+  console.log("🚀 Server running on port", PORT);
 });
