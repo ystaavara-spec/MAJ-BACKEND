@@ -9,17 +9,23 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB CONNECT (SAFE VERSION)
+// =====================
+// MongoDB CONNECTION
+// =====================
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ Mongo Error:", err));
 
-// ROOT (NO NOT FOUND)
+// =====================
+// ROOT ROUTE (NO NOT FOUND)
+// =====================
 app.get("/", (req, res) => {
   res.send("🚀 SINX API ONLINE");
 });
 
+// =====================
 // STATUS ROUTE
+// =====================
 app.get("/status", (req, res) => {
   res.json({
     status: "ONLINE",
@@ -28,9 +34,18 @@ app.get("/status", (req, res) => {
   });
 });
 
+// =====================
 // ADMIN LOGIN
+// =====================
 app.post("/admin/login", (req, res) => {
   const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({
+      success: false,
+      message: "Missing credentials"
+    });
+  }
 
   if (
     username === process.env.ADMIN_USER &&
@@ -48,7 +63,16 @@ app.post("/admin/login", (req, res) => {
   });
 });
 
-// 404 HANDLER (SAFE)
+// =====================
+// HEALTH CHECK (Render safe)
+// =====================
+app.get("/health", (req, res) => {
+  res.json({ ok: true });
+});
+
+// =====================
+// 404 HANDLER
+// =====================
 app.use((req, res) => {
   res.status(404).json({
     error: "Route not found",
@@ -56,9 +80,11 @@ app.use((req, res) => {
   });
 });
 
-// START SERVER (IMPORTANT)
+// =====================
+// START SERVER
+// =====================
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("🚀 Server running on port", PORT);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
